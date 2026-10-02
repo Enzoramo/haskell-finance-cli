@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# Arquivos gerados pelo GHC
+*.hi
+*.o
+*.dyn_hi
+*.dyn_o
+/build/
+/Finance/simulador
+/Finance/simulador.exe
+/Finance/Main
+/Finance/Main.exe
+
+# Cabal e Stack
+dist/
+dist-newstyle/
+.stack-work/
+
+# Configuração local e credenciais
+.env
+.env.*
+!.env.example

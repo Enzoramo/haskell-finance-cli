@@ -1,0 +1,27 @@
+name: Compilar Haskell
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v6
+      - name: Preparar o Haskell
+        uses: haskell-actions/setup@v2
+        with:
+          ghc-version: '9.10.3'
+          cabal-version: '3.16.1.0'
+          cabal-update: false
+      - name: Compilar o simulador
+        run: |
+          mkdir -p build
+          ghc -iFinance -outputdir build Finance/Main.hs -o build/simulador
