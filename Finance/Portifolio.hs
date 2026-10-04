@@ -11,14 +11,33 @@ comprar ativo quantidade ((nome, total) : resto)
   | ativo == nome = (nome, total + quantidade) : resto
   | otherwise = (nome, total) : comprar ativo quantidade resto
 
--- Function to sell an asset from the portfolio
-vender :: String -> Integer -> [(String, Integer)] -> [(String, Integer)]
-vender ativo quantidade [] = [(ativo, quantidade)]
 
-vender ativo quantidade ((nome, total) : resto)
-  | ativo == nome && total >= quantidade = (nome, total - quantidade) : resto -- if the asser exist & has enough, subtract the quantity
-  | ativo == nome && total < quantidade = error "Quantidade insuficiente para vender" -- throw an error
-  | otherwise = (nome, total) : vender ativo quantidade resto -- if the asset isnt the one, keep looking
+-- Function to sell an asset from the portfolio
+vender :: String -> Integer -> [(String, Integer)]
+       -> Either String [(String, Integer)]
+
+vender _ quantidade _
+  | quantidade <= 0 =
+      Left "A quantidade deve ser maior que zero."
+
+vender _ _ [] =
+  Left "Ativo não encontrado na carteira."
+
+vender ativo quantidade ((nome, total) : resto) -- additionally, we can check if the asset exists and if the quantity is sufficient to sell
+  | ativo == nome && quantidade > total =
+      Left "Quantidade insuficiente para vender."
+
+  | ativo == nome =
+      Right ((nome, total - quantidade) : resto)
+
+  | otherwise =
+      case vender ativo quantidade resto of
+        Left mensagem ->
+          Left mensagem
+
+        Right restoAtualizado ->
+          Right ((nome, total) : restoAtualizado)
+
 
 -- Function to locate an asset in the portfolio
 localizar :: String -> [(String, Integer)] -> Maybe (String, Integer) -- returns Just (asset, quantity) if found
