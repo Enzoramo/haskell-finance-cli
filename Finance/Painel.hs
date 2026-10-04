@@ -32,9 +32,13 @@ linhas carteira = do
                         linhas carteira
 
                     | otherwise -> do
-                        putStrLn $ "Sucesso ao comprar " ++ show quantidade ++ " de " ++ ativo
-                        let novaCarteira = comprar ativo quantidade carteira
-                        linhas novaCarteira
+                        case comprar ativo quantidade carteira of
+                            Left mensagem -> do
+                                putStrLn $ "Erro ao comprar: " ++ mensagem
+                                linhas carteira
+                            Right novaCarteira -> do
+                                putStrLn $ "Sucesso ao comprar " ++ show quantidade ++ " de " ++ ativo
+                                linhas novaCarteira
         "3" -> do
             putStrLn "Digite o ativo que deseja vender:"
             ativo <- getLine
@@ -63,4 +67,6 @@ linhas carteira = do
                 Just (nome, total) -> putStrLn $ "Ativo: " ++ nome ++ ", Quantidade: " ++ show total
                 Nothing -> putStrLn "Ativo não encontrado na carteira"
             linhas carteira
-        _ -> putStrLn "Opção inválida"
+        _ -> do
+            putStrLn "Opção inválida. Tente novamente."
+            linhas carteira
